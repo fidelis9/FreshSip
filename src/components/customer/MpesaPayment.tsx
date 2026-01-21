@@ -77,23 +77,7 @@ export function MpesaPayment() {
 
         if (itemsError) throw itemsError;
 
-        // Update stock for each item
-        for (const item of items) {
-          const { data: currentStock } = await supabase
-            .from('stock')
-            .select('quantity')
-            .eq('branch_id', selectedBranch.id)
-            .eq('product_id', item.product.id)
-            .single();
-
-          if (currentStock) {
-            await supabase
-              .from('stock')
-              .update({ quantity: currentStock.quantity - item.quantity })
-              .eq('branch_id', selectedBranch.id)
-              .eq('product_id', item.product.id);
-          }
-        }
+        // Stock is automatically reduced by database trigger on order_items insert
 
         setPaymentStatus('success');
         toast({
